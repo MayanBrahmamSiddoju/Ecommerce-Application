@@ -24,7 +24,7 @@ async function createUser(userData) {
     username,
     email,
     password: hashedPassword,
-    role: 'GENERAL', // Assign a default role
+    role: 'ADMIN', // Assign a default role
   });
 
   // Save the user to the database
