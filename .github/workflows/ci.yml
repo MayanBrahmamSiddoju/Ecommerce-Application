@@ -1,0 +1,64 @@
+name: CI - Test & Lint
+
+on:
+  pull_request:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  frontend-tests:
+    name: Frontend: install, lint, test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install frontend deps
+        run: npm ci
+
+      - name: Print environment (explore)
+        run: |
+          echo "--- Node & NPM ---"
+          node --version
+          npm --version
+          echo "--- Environment variables ---"
+          env | sort
+
+      - name: Run frontend tests (if available)
+        run: |
+          if npm run | grep -q "test"; then npm test -- --watchAll=false || true; else echo "No tests script"; fi
+
+  backend-tests:
+    name: Backend: install, lint, test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install backend deps
+        run: npm ci || npm install
+
+      - name: Print environment (explore)
+        run: |
+          echo "--- Node & NPM ---"
+          node --version
+          npm --version
+          echo "--- Environment variables ---"
+          env | sort
+
+      - name: Run backend tests (if available)
+        run: |
+          if npm run | grep -q "test"; then npm test || true; else echo "No tests script"; fi

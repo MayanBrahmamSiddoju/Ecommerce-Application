@@ -1,0 +1,31 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ecommerce-backend
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      # Add other env vars here or reference an env_file
+    ports:
+      - "5000:5000"
+    networks:
+      - ecommerce-net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ecommerce-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80" # map host:container -> example: localhost:3000 -> nginx:80
+    networks:
+      - ecommerce-net
+    depends_on:
+      - backend
+
+networks:
+  ecommerce-net:
+    driver: bridge
