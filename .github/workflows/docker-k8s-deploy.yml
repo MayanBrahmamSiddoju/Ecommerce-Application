@@ -10,8 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       REGISTRY: ghcr.io
-      IMAGE_NAME_FRONTEND: ${{ toLower(github.repository) }}-frontend
-      IMAGE_NAME_BACKEND: ${{ toLower(github.repository) }}-backend
 
     steps:
       - uses: actions/checkout@v4
@@ -34,14 +32,14 @@ jobs:
         with:
           context: ./frontend
           push: true
-          tags: ${{ env.REGISTRY }}/${{ toLower(github.repository) }}-frontend:latest
+          tags: ghcr.io/mayanbrahmamsiddoju/ecommerce-application-frontend:latest
 
       - name: Build and push backend image
         uses: docker/build-push-action@v4
         with:
           context: ./backend
           push: true
-          tags: ${{ env.REGISTRY }}/${{ toLower(github.repository) }}-backend:latest
+          tags: ghcr.io/mayanbrahmamsiddoju/ecommerce-application-backend:latest
 
   deploy-to-cluster:
     runs-on: ubuntu-latest
@@ -60,8 +58,8 @@ jobs:
           KUBECONFIG: ${{ secrets.KUBECONFIG }}
         run: |
           kubectl apply -f k8s/namespace.yaml
-          kubectl set image deployment/frontend-deployment frontend=${{ env.REGISTRY }}/${{ toLower(github.repository) }}-frontend:latest -n ecommerce
-          kubectl set image deployment/backend-deployment backend=${{ env.REGISTRY }}/${{ toLower(github.repository) }}-backend:latest -n ecommerce
+          kubectl set image deployment/frontend-deployment frontend=ghcr.io/mayanbrahmamsiddoju/ecommerce-application-frontend:latest -n ecommerce
+          kubectl set image deployment/backend-deployment backend=ghcr.io/mayanbrahmamsiddoju/ecommerce-application-backend:latest -n ecommerce
           kubectl apply -f k8s/frontend-service.yaml -n ecommerce
           kubectl apply -f k8s/backend-service.yaml -n ecommerce
           kubectl apply -f k8s/ingress.yaml -n ecommerce
