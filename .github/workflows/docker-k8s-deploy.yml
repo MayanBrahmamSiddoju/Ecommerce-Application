@@ -60,6 +60,18 @@ jobs:
         env:
           KUBECONFIG: ${{ secrets.KUBECONFIG }}
         run: |
+          # Decode base64 KUBECONFIG if present
+          if [ -z "$KUBECONFIG" ]; then
+            echo "WARNING: KUBECONFIG secret not set. Skipping deploy."
+            exit 0
+          fi
+          echo "$KUBECONFIG" | base64 -d > /tmp/kubeconfig
+          export KUBECONFIG=/tmp/kubeconfig
+          
+          # Test cluster connection
+          kubectl cluster-info
+          
+          # Apply manifests
           kubectl apply -f k8s/namespace.yaml
           kubectl set image deployment/frontend-deployment frontend=ghcr.io/mayanbrahmamsiddoju/ecommerce-application-frontend:latest -n ecommerce
           kubectl set image deployment/backend-deployment backend=ghcr.io/mayanbrahmamsiddoju/ecommerce-application-backend:latest -n ecommerce
