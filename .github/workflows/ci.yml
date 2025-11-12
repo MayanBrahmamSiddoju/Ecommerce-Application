@@ -8,7 +8,7 @@ on:
 
 jobs:
   frontend-tests:
-    name: Frontend: install, lint, test
+    name: "Frontend: install, lint, test"
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -36,7 +36,7 @@ jobs:
           if npm run | grep -q "test"; then npm test -- --watchAll=false || true; else echo "No tests script"; fi
 
   backend-tests:
-    name: Backend: install, lint, test
+    name: "Backend: install, lint, test"
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -62,3 +62,12 @@ jobs:
       - name: Run backend tests (if available)
         run: |
           if npm run | grep -q "test"; then npm test || true; else echo "No tests script"; fi
+
+  port-forward:
+    name: Port Forwarding
+    runs-on: ubuntu-latest
+    steps:
+      - name: Port forward to ingress-nginx
+        run: |
+          minikube tunnel
+          kubectl port-forward svc/ingress-nginx-controller 8080:80 -n ingress-nginx

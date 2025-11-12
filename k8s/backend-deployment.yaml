@@ -20,7 +20,7 @@ spec:
           image: ecommerce-application-backend:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 5000
+            - containerPort: 8080
           env:
             - name: NODE_ENV
               value: "production"

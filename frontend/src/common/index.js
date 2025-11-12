@@ -1,4 +1,5 @@
-const backendDomain='http://localhost:8080'
+// Use relative path to backend (works in both development and containerized environments)
+const backendDomain=''
 
 const SummaryApi={
     signUp:{
